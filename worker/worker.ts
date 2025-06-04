@@ -4,7 +4,7 @@ import { Worker } from 'bullmq'
 import { processes } from '@/app/actions/processes'
 import { prisma } from '@/app/lib/db'
 
-const connection = new Redis("redis://default:AY6yAAIjcDFjOGI0YWE1MjFmMTg0NjhiYmMxYjVkZGU4ZDVmZDk2OHAxMA@endless-ghost-36530.upstash.io:6379", {
+const connection = new Redis("rediss://default:AY6yAAIjcDFjOGI0YWE1MjFmMTg0NjhiYmMxYjVkZGU4ZDVmZDk2OHAxMA@endless-ghost-36530.upstash.io:6379", {
     maxRetriesPerRequest: null,
 })
 
