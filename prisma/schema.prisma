@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  userId    String   @id
+  name      String?
+  email     String   @unique
+  createdAt DateTime @default(now())
+  videos    Video[]
+  credits   Int      @default(1)
+}
+
+model Video {
+  videoId      String   @id
+  createdAt    DateTime @default(now())
+  prompt       String
+  processing   Boolean
+  failed       Boolean? @default(false)
+  content      String?
+  imagePrompts String[]
+  imageLinks   String[]
+  audio        String?
+  videoUrl     String?
+  captions     Json?
+  duration     Int?
+  thumbnail    String?
+  userId       String
+  user         User     @relation(fields: [userId], references: [userId])
+}
