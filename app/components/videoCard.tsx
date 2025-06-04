@@ -56,7 +56,7 @@ export const VideoCard = ({ video }: { video: any }) => {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-48" align="end">
-                        <DropdownMenuItem onClick={handleDelete} className="cursor-pointer">
+                        <DropdownMenuItem onClick={handleDownload} className="cursor-pointer">
                             <Download className="mr-2 h-4 w-4" />
                             <span>Download</span>
                         </DropdownMenuItem>

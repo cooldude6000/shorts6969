@@ -24,17 +24,31 @@ export const useVideoActions = ({ videoId, videoUrl, onDeleteSuccess }: UseVideo
             return
         }
 
-        const a = document.createElement('a')
-        a.href = videoUrl
-        a.download = `video-${videoId}.mp4`
-        a.target = '_blank'
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
+        try {
+            const loadingToast = toast.loading("Preparing download...", {
+                description: "please wait while we prepare your video"
+            })
+            const a = document.createElement('a')
+            a.href = `/api/download/${videoId}`
+            a.download = `video-${videoId}.mp4`
+            a.style.display = 'none'
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
 
-        toast.success("Donload started", {
-            description: "Video Downloaded"
-        })
+            setTimeout(() => {
+                toast.dismiss(loadingToast)
+                toast.success("Download started", {
+                    description: "video saved to your device"
+                })
+            }, 4000)
+
+        } catch (error) {
+            console.error('download error:', error)
+            toast.error('Download failed', {
+                description: "unable to download video.please try again bitch"
+            })
+        }
     }
 
     const handleCopyLink = async () => {

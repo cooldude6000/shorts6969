@@ -25,7 +25,7 @@ export const VideoActions = ({ videoId, videoUrl, isOwner }: videoActionsPromp) 
     return (
         <div className="flex flex-col gap-3 mt-10 ml-8 justify-center">
             <Button
-                onClick={handleDelete}
+                onClick={handleDownload}
                 className='bg-gradient-to-br hover:opacity-80 text-white rounded-full from-[#3352CC] to-[#1C2D70] font-medium flex items-center gap-2 justify-start w-48 cursor-pointer'
                 disabled={!videoUrl}
             >

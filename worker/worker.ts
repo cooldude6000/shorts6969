@@ -4,12 +4,16 @@ import { Worker } from 'bullmq'
 import { processes } from '@/app/actions/processes'
 import { prisma } from '@/app/lib/db'
 
-const connection = new Redis({
-    host: process.env.UPSTASH_REDIS_HOST,
-    port: 6379,
-    password: process.env.UPSTASH_REDIS_PASSWORD,
-    tls: {},
-    maxRetriesPerRequest: null
+const connection = new Redis("redis://default:AY6yAAIjcDFjOGI0YWE1MjFmMTg0NjhiYmMxYjVkZGU4ZDVmZDk2OHAxMA@endless-ghost-36530.upstash.io:6379", {
+    maxRetriesPerRequest: null,
+})
+
+connection.on('connect', () => {
+    console.log('Redis connect sucefullly')
+})
+
+connection.on('error', (err) => {
+    console.log('Redis connect error:', err)
 })
 
 const worker = new Worker('video-processing', async (job) => {

@@ -11,8 +11,24 @@ import TooltipCredits from '../components/creditsButton'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useRouter } from 'next/navigation'
 import { createVideo } from '../actions/create'
+import { MultiStepLoader as Loader } from '@/components/ui/multi-step-loader'
 
 const CreateProject = ({ user, credits }: { user: string | null; credits: number }) => {
+    const loadingStates = [
+        { text: "Generating Context" },
+        { text: "Generating Image Scripts" },
+        { text: "Generating Image 1" },
+        { text: "Generating Image 2" },
+        { text: "Generating Image 3" },
+        { text: "Generating Image 4" },
+        { text: "Generating Image 5" },
+        { text: "Generating Audio Script" },
+        { text: "Generating Audio" },
+        { text: "Generating Captions" },
+        { text: "Combining it All" },
+        { text: "Almost done" },
+        { text: "Completed, redirecting" }
+    ]
     const router = useRouter()
     const placeholders = [
         "What's the first rule of Fight Club?",
@@ -24,6 +40,43 @@ const CreateProject = ({ user, credits }: { user: string | null; credits: number
     const [prompt, setPrompt] = useState("")
     const [showLoginDialog, setShowLoginDialog] = useState(false)
     const [showCreditsDialog, setShowCreditsDialog] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+
+    const handleCreateVideo = async () => {
+        setIsLoading(true)
+
+        try {
+            const result = await createVideo(prompt)
+
+            if (result?.videoId) {
+                const pollInterval = setInterval(async () => {
+                    try {
+                        const response = await fetch(`/api/video-status/${result.videoId}`)
+                        const data = await response.json()
+
+                        if (data.completed) {
+                            clearInterval(pollInterval)
+                            router.replace(`/videos/${result.videoId}`)
+                        } else if (data.failed) {
+                            clearInterval(pollInterval)
+                            setIsLoading(false)
+                            alert('video generating failed')
+                        }
+                    } catch (error) {
+                        console.log('still processing....')
+                    }
+                }, 5000)
+            } else {
+                setIsLoading(false)
+                alert('failed to creating video')
+            }
+        } catch (error) {
+            setIsLoading(false)
+            console.log('failed to creating video')
+            alert('failed to creating video')
+
+        }
+    }
     return (
         <div className='w-screen h-screen flex flex-col'>
             {
@@ -52,6 +105,15 @@ const CreateProject = ({ user, credits }: { user: string | null; credits: number
                 </div>
             }
 
+            <Loader
+                key={isLoading ? 'loading' : 'idle'}
+                loadingStates={loadingStates}
+                loading={isLoading}
+                duration={10000}
+                loop={false}
+
+            />
+
             <h1 className="text-4xl md:text-4xl lg:text-6xl font-semibold max-w-7xl mx-auto text-center mt-6 relative z-20 py-6 bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 via-neutral-700 to-neutral-700 dark:from-neutral-800 dark:via-white dark:to-white">
                 Generate realistic short
                 <div className='h-6'></div>
@@ -76,7 +138,7 @@ const CreateProject = ({ user, credits }: { user: string | null; credits: number
                             if (credits < 1) {
                                 return setTimeout(() => setShowCreditsDialog(true), 700)
                             }
-                            createVideo(prompt)
+                            setTimeout(() => handleCreateVideo(), 1000)
                         }}
                     />
                 </div>
