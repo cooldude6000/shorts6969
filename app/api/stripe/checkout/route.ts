@@ -17,8 +17,8 @@ export async function POST(req: Request) {
         payment_method_types: ['card'],
         line_items: [{ price: priceId, quantity: 1 }],
         mode: 'payment',
-        success_url: 'http://localhost:3000/success',
-        cancel_url: 'http://localhost:3000/cancel',
+        success_url: 'https://shorts6969.vercel.app/success',
+        cancel_url: 'https://shorts6969.vercel.app/cancel',
         metadata: {
             userId: user.id,
             priceId: priceId
